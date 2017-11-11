@@ -1,0 +1,81 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+table {
+	border: 10px solid black;
+	border-collapse: collapse;
+	display: inline-table;
+}
+
+
+table tr td {
+	border: 2px solid black;
+	width: 70px;
+	height: 70px;
+	margin: 0;
+}
+
+
+.game_board {
+	margin: auto;
+	text-align: center;
+	margin-top: 50px;
+}
+
+table #white {
+	background-image: url('../images/bright_cells.jpeg');
+}
+
+table #black {
+	background-image: url('../images/dark_cells.jpg');
+}
+
+button {
+	border-radius: 2em;
+	width: 50px;
+	height: 50px;
+	border: 2px solid black;
+
+}
+
+.white_button {
+	background-color: white;
+	box-shadow: 0 4px #999;
+}
+
+.white_button:hover {
+	background-color: gray;
+}
+
+.white_button:active {
+	box-shadow: 0 1px #666;
+	transform: translateY(4px);
+}
+
+.red_button {
+	background-color: red;
+	box-shadow: 0 4px black;
+}
+
+.red_button:hover {
+	background-color: #b30000;
+}
+
+.red_button:active {
+	box-shadow: 0 1px black;
+	transform: translateY(4px);
+}
+
+.active_white {
+	background-color: gray;
+	box-shadow: 0 1px #666;
+	transform: translateY(4px);
+}
+
+.active_red {
+	background-color: #b30000;
+	box-shadow: 0 1px black;
+	transform: translateY(4px);
+}
