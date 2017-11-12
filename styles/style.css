@@ -79,3 +79,8 @@ button {
 	box-shadow: 0 1px black;
 	transform: translateY(4px);
 }
+
+.possible_button {
+	background-color: green;
+	opacity: 50%;
+}

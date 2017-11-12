@@ -12,6 +12,8 @@ var gameBoard = [
 
 
 var playerTurn = 1;
+var selectedStoneY = -1;
+var selectedStoneX = -1;
 
 
 function createButton(type, i, j) {
@@ -34,14 +36,25 @@ function createButton(type, i, j) {
 function handleButtonClick(e){
 	deselectAll();
 	markAsSelected(e);
+	setPosibleMoves();
 }
 
 function markAsSelected(e) {
 	if(e.target.className === 'white_button'){
 		e.target.className = 'active_white';
+		var btnId = Number(e.target.id);
+		selectedStoneY = btnId % 8;
+		selectedStoneX = (btnId - selectedStoneY) / 8;
 	}else if(e.target.className === 'red_button'){
 		e.target.className = 'active_red';
+		var btnId = Number(e.target.id);
+		selectedStoneY = btnId % 8;
+		selectedStoneX = (btnId - selectedStoneY) / 8;
 	}
+}
+
+function setPosibleMoves() {
+	
 }
 
 function setClicable() {
