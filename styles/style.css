@@ -32,6 +32,14 @@ table #black {
 	background-image: url('../images/dark_cells.jpg');
 }
 
+#arrow {
+	width: 20%;
+	height: auto;
+	position: absolute;
+	margin-top: 10%;
+	margin-left: 5%;
+}
+
 button {
 	border-radius: 2em;
 	width: 50px;
@@ -78,4 +86,14 @@ button {
 	background-color: #b30000;
 	box-shadow: 0 1px black;
 	transform: translateY(4px);
+}
+
+.possible_button {
+	background-color: green;
+	opacity: 0.6;
+	box-shadow: 0 4px black;
+}
+
+.possible_button:hover {
+	background-color: #00ff00;
 }
