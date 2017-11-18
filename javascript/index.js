@@ -16,6 +16,8 @@ var selectedStoneY = -1;
 var selectedStoneX = -1;
 
 
+
+
 function createButton(type, i, j) {
 	var btn = document.createElement("BUTTON");
 
@@ -29,6 +31,18 @@ function createButton(type, i, j) {
 	btn.id = ((8 * i) + j).toString(); 
 
 	return btn;
+
+}
+
+
+function createPossibleButton(i, j) {
+	var btn = document.createElement('BUTTON');
+	btn.className = 'possible_button';
+	btn.id = ((8 * i) + j).toString(); 
+	btn.addEventListener('click', handlePossibleButtonClick, 'false');
+
+	var table = window.document.getElementById('game_board_table');
+	table.rows[i].cells[j].appendChild(btn);
 }
 
 
@@ -37,6 +51,93 @@ function handleButtonClick(e){
 	deselectAll();
 	markAsSelected(e);
 	setPosibleMoves();
+}
+
+function refreshBoard() {
+
+	var btn;
+	var table = document.getElementById("game_board_table");
+
+	for(var i = 0; i < 8; i++){
+		for(var j = 0; j < 8; j++){
+			btn = document.getElementById((8 * i) + j);
+
+			if(gameBoard[i][j] == 0 && btn != null){
+				table.rows[i].cells[j].removeChild(btn);
+			}else if(gameBoard[i][j] != 0 && btn == null){
+				createButton(gameBoard[i][j], i, j);
+			}
+		}
+	}
+}
+
+function changeArrowPos() {
+	var img = document.getElementById("arrow");
+
+	playerTurn == 2 ? img.style.marginTop = "5%" : img.style.marginTop = "35%";
+}
+
+function eatStone(i, j) {
+	var btnId = Number((8 * i) + j);
+	var btn = document.getElementById(btnId);
+
+	document.getElementById("game_board_table").rows[i].cells[j].removeChild(btn);
+}
+
+function TryToEatStone(i, j) {
+
+	console.log("Selected stone at x: " + selectedStoneX + " y: " + selectedStoneY);
+	console.log("Possible move to x: " + i + " y: " + j );
+
+	if(playerTurn == 1) {
+		if(i + 2 <= 7 && j - 2 >= 0 && j + 2 <= 7){
+			if(i + 2 == selectedStoneX && j - 2 == selectedStoneY){
+				console.log("Possible eat stone at x: " + (i + 1) + " y: " + (j - 1));
+				eatStone(i + 1, j - 1);
+				gameBoard[i + 1][j - 1] = 0;
+			}else if(i + 2 == selectedStoneX && j + 2 == selectedStoneY){
+				console.log("Possible eat stone at x: " + (i + 1) + " y: " + (j + 1));
+				eatStone(i + 1, j + 1);
+				gameBoard[i + 1][j + 1] = 0;
+			}
+		}
+	}else{
+		if(i - 2 >= 0  && j - 2 >= 0 && j + 2 <= 7){
+			if(i - 2 == selectedStoneX && j - 2 == selectedStoneY){
+				console.log("Possible eat stone at x: " + (i - 1) + " y: " + (j - 1));
+				eatStone(i - 1, j - 1);
+				gameBoard[i - 1][j - 1] = 0;
+			}else if(i - 2 == selectedStoneX && j + 2 == selectedStoneY){
+				console.log("Possible eat stone at x: " + (i - 1) + " y: " + (j + 1));
+				eatStone(i - 1, j + 1);
+				gameBoard[i - 1][j + 1] = 0;
+			}
+		}
+	}
+}
+
+function handlePossibleButtonClick(e){
+
+	var btnId = Number(e.target.id);
+	var posY = btnId % 8;
+	var posX = (btnId - posY) / 8;
+
+	playerTurn == 1 ? gameBoard[posX][posY] = 1 : gameBoard[posX][posY] = 2;
+	e.target.className = playerTurn == 1 ? "white_button" : "red_button";
+	e.target.removeEventListener('click', handlePossibleButtonClick, 'false');
+	e.target.addEventListener('click', handleButtonClick, 'false');
+	gameBoard[selectedStoneX][selectedStoneY] = 0;
+
+	TryToEatStone(posX, posY);
+
+	playerTurn == 1 ? playerTurn = 2 : playerTurn = 1;
+
+	changeArrowPos();
+	refreshBoard();
+	setClicable(0);
+
+
+
 }
 
 function markAsSelected(e) {
@@ -54,10 +155,109 @@ function markAsSelected(e) {
 }
 
 function setPosibleMoves() {
-	
+	if(playerTurn == 1){
+		if(checkSides(selectedStoneX, selectedStoneY) == 0){
+			if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 0 && gameBoard[selectedStoneX - 1][selectedStoneY -1] == 0){
+				createPossibleButton(selectedStoneX - 1, selectedStoneY + 1);
+				createPossibleButton(selectedStoneX - 1, selectedStoneY - 1);
+			}else if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 || gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 1){
+				gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 ? 
+					createPossibleButton(selectedStoneX - 1, selectedStoneY - 1) : 
+					createPossibleButton(selectedStoneX - 1, selectedStoneY + 1);
+			}else if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 2 || gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 2){
+				if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 2 && isPossibleJump()){
+					if(gameBoard[selectedStoneX - 2][selectedStoneY + 2] == 0){
+						createPossibleButton(selectedStoneX - 2, selectedStoneY + 2);
+					}
+					if(gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 0){
+						createPossibleButton(selectedStoneX - 1, selectedStoneY - 1);
+					}
+				}
+				if(gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 2 && isPossibleJump()){
+					if(gameBoard[selectedStoneX - 2][selectedStoneY - 2] == 0){
+						createPossibleButton(selectedStoneX - 2, selectedStoneY - 2);
+					}
+					if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 0){
+						createPossibleButton(selectedStoneX - 1, selectedStoneY + 1);
+					}
+				}
+			}
+		}else if(checkSides(selectedStoneX, selectedStoneY) == 1) {
+			if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 0) {
+				createPossibleButton(selectedStoneX - 1, selectedStoneY + 1);
+			}
+		}else if(checkSides(selectedStoneX, selectedStoneY) == 2) {
+			if(gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 0) {
+				createPossibleButton(selectedStoneX - 1, selectedStoneY - 1);
+			}
+		}
+	}else{
+		if(checkSides(selectedStoneX, selectedStoneY) == 0){
+			if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 0 && gameBoard[selectedStoneX + 1][selectedStoneY -1] == 0){
+				createPossibleButton(selectedStoneX + 1, selectedStoneY + 1);
+				createPossibleButton(selectedStoneX + 1, selectedStoneY - 1);
+			}else if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 2 || gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 2){
+				gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1 ? 
+					createPossibleButton(selectedStoneX + 1, selectedStoneY - 1) : 
+					createPossibleButton(selectedStoneX + 1, selectedStoneY + 1);
+			}else if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1 || gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 1){
+				if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1 && isPossibleJump()){
+					if(gameBoard[selectedStoneX + 2][selectedStoneY + 2] == 0){
+						createPossibleButton(selectedStoneX + 2, selectedStoneY + 2);
+					}
+					if(gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 0){
+						createPossibleButton(selectedStoneX + 1, selectedStoneY - 1);
+					}
+				}
+				if(gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 1 && isPossibleJump()){
+					if(gameBoard[selectedStoneX + 2][selectedStoneY - 2] == 0){
+						createPossibleButton(selectedStoneX + 2, selectedStoneY - 2);
+					}
+					if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 0){
+						createPossibleButton(selectedStoneX + 1, selectedStoneY + 1);
+					}
+				}
+			}
+		}else if(checkSides(selectedStoneX, selectedStoneY) == 1) {
+			if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 0) {
+				createPossibleButton(selectedStoneX + 1, selectedStoneY + 1);
+			}
+		}else if(checkSides(selectedStoneX, selectedStoneY) == 2) {
+			if(gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 0) {
+				createPossibleButton(selectedStoneX + 1, selectedStoneY - 1);
+			}
+		}
+	}
 }
 
-function setClicable() {
+function checkSides(x,y){
+	if(y == 0 ){
+		return 1;
+	}else if(y == 7){
+		return 2;
+	}else{
+		return 0;
+	}
+}
+
+function isPossibleJump(){
+	if(selectedStoneX >= 2 && selectedStoneX <= 5){
+		if(playerTurn == 1){
+			if(selectedStoneY >= 2)
+				return 1;
+			else
+				return 0;
+		}else{
+			if(selectedStoneY <= 5)
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+}
+
+function setClicable(gameStart) {
 	var table = window.document.getElementById("game_board_table");
 
 	for(var i = 0; i < 8; i++){
@@ -65,8 +265,16 @@ function setClicable() {
 			var btn = document.getElementById((8*i) + j);
 			
 			if(btn != null){
-				if(gameBoard[i][j] % 2 != playerTurn ){
-					btn.removeEventListener("click", handleButtonClick, 'false');
+				if(gameStart){
+					if(gameBoard[i][j] != playerTurn){
+						btn.removeEventListener("click", handleButtonClick, 'false');
+					}
+				}else {
+					if(gameBoard[i][j] != playerTurn){
+						btn.removeEventListener("click", handleButtonClick, 'false');
+					}else{
+						btn.addEventListener("click", handleButtonClick, 'false');
+					}
 				}
 		  	}
 		}
@@ -86,8 +294,10 @@ function deselectAll() {
 					btn.className = 'white_button';
 				}else if(btn.className == 'active_red'){
 					btn.className = 'red_button';
-				}
-		  }
+				}else if(btn.className == 'possible_button'){
+					table.rows[i].cells[j].removeChild(btn);
+				}				
+			}
 		}
 	}
 }
@@ -96,17 +306,19 @@ function setGameBoard() {
 	for(var i = 0; i < 8; i++) {
 		for(var j = 0; j < 8; j++) {
 			if(gameBoard[i][j] != 0) {
-				window.document.getElementById("game_board_table")
+				document.getElementById("game_board_table")
 				.rows[i].cells[j]
 				.appendChild(createButton(gameBoard[i][j], i, j));  
 			}
 		}
 	}
+
+	changeArrowPos();
 }
 
 function startGame() {
 	setGameBoard();
-	setClicable();
+	setClicable(1);
 }
 
 window.onload = startGame();
