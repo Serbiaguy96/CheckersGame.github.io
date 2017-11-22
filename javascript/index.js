@@ -90,7 +90,7 @@ function TryToEatStone(i, j) {
 	console.log("Possible move to x: " + i + " y: " + j );
 
 	if(playerTurn == 1) {
-		if(i + 2 <= 7 && j - 2 >= 0 && j + 2 <= 7){
+		if(i + 2 <= 7 && j - 2 >= 0 && j - 2 <= 7){
 			if(i + 2 == selectedStoneX && j - 2 == selectedStoneY){
 				console.log("Possible eat stone at x: " + (i + 1) + " y: " + (j - 1));
 				eatStone(i + 1, j - 1);
@@ -102,7 +102,7 @@ function TryToEatStone(i, j) {
 			}
 		}
 	}else{
-		if(i - 2 >= 0  && j - 2 >= 0 && j + 2 <= 7){
+		if(i - 2 >= 0  && j - 2 >= 0 && j - 2 <= 7){
 			if(i - 2 == selectedStoneX && j - 2 == selectedStoneY){
 				console.log("Possible eat stone at x: " + (i - 1) + " y: " + (j - 1));
 				eatStone(i - 1, j - 1);
@@ -161,11 +161,21 @@ function setPosibleMoves() {
 				createPossibleButton(selectedStoneX - 1, selectedStoneY + 1);
 				createPossibleButton(selectedStoneX - 1, selectedStoneY - 1);
 			}else if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 || gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 1){
-				gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 ? 
-					createPossibleButton(selectedStoneX - 1, selectedStoneY - 1) : 
+				if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 && gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 0 ){
+					createPossibleButton(selectedStoneX - 1, selectedStoneY - 1);
+				}else if(gameBoard[selectedStoneX - 1][selectedStoneY - 1 ] == 1 && gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 0){
 					createPossibleButton(selectedStoneX - 1, selectedStoneY + 1);
+				}else if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 && gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 2){
+					if(gameBoard[selectedStoneX - 2][selectedStoneY - 2] == 0){
+						createPossibleButton(selectedStoneX - 2, selectedStoneY - 2);
+					}
+				}else if(gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 1 && gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 2){
+					if(gameBoard[selectedStoneX - 2][selectedStoneY + 2] == 0){
+						createPossibleButton(selectedStoneX - 2, selectedStoneY + 2);
+					}
+				}
 			}else if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 2 || gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 2){
-				if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 2 && isPossibleJump()){
+				if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 2 ){
 					if(gameBoard[selectedStoneX - 2][selectedStoneY + 2] == 0){
 						createPossibleButton(selectedStoneX - 2, selectedStoneY + 2);
 					}
@@ -173,7 +183,7 @@ function setPosibleMoves() {
 						createPossibleButton(selectedStoneX - 1, selectedStoneY - 1);
 					}
 				}
-				if(gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 2 && isPossibleJump()){
+				if(gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 2){
 					if(gameBoard[selectedStoneX - 2][selectedStoneY - 2] == 0){
 						createPossibleButton(selectedStoneX - 2, selectedStoneY - 2);
 					}
@@ -185,10 +195,18 @@ function setPosibleMoves() {
 		}else if(checkSides(selectedStoneX, selectedStoneY) == 1) {
 			if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 0) {
 				createPossibleButton(selectedStoneX - 1, selectedStoneY + 1);
+			}else if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 2){
+				if(gameBoard[selectedStoneX - 2][selectedStoneY + 2] == 0){
+					createPossibleButton(selectedStoneX - 2, selectedStoneY + 2);
+				}
 			}
 		}else if(checkSides(selectedStoneX, selectedStoneY) == 2) {
 			if(gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 0) {
 				createPossibleButton(selectedStoneX - 1, selectedStoneY - 1);
+			}else if(gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 2){
+				if(gameBoard[selectedStoneX - 2][selectedStoneY - 2] == 0){
+					createPossibleButton(selectedStoneX - 2, selectedStoneY - 2);
+				}
 			}
 		}
 	}else{
@@ -197,11 +215,21 @@ function setPosibleMoves() {
 				createPossibleButton(selectedStoneX + 1, selectedStoneY + 1);
 				createPossibleButton(selectedStoneX + 1, selectedStoneY - 1);
 			}else if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 2 || gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 2){
-				gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1 ? 
-					createPossibleButton(selectedStoneX + 1, selectedStoneY - 1) : 
+				if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 2 && gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 0 ){
+					createPossibleButton(selectedStoneX + 1, selectedStoneY -1);
+				}else if(gameBoard[selectedStoneX + 1][selectedStoneY - 1 ] == 2 && gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 0){
 					createPossibleButton(selectedStoneX + 1, selectedStoneY + 1);
+				}else if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 2 && gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 1){
+					if(gameBoard[selectedStoneX + 2][selectedStoneY - 2] == 0){
+						createPossibleButton(selectedStoneX + 2, selectedStoneY - 2);
+					}
+				}else if(gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 2 && gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1){
+					if(gameBoard[selectedStoneX + 2][selectedStoneY + 2] == 0){
+						createPossibleButton(selectedStoneX + 2, selectedStoneY + 2);
+					}
+				}
 			}else if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1 || gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 1){
-				if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1 && isPossibleJump()){
+				if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1 ){
 					if(gameBoard[selectedStoneX + 2][selectedStoneY + 2] == 0){
 						createPossibleButton(selectedStoneX + 2, selectedStoneY + 2);
 					}
@@ -209,7 +237,7 @@ function setPosibleMoves() {
 						createPossibleButton(selectedStoneX + 1, selectedStoneY - 1);
 					}
 				}
-				if(gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 1 && isPossibleJump()){
+				if(gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 1 ){
 					if(gameBoard[selectedStoneX + 2][selectedStoneY - 2] == 0){
 						createPossibleButton(selectedStoneX + 2, selectedStoneY - 2);
 					}
@@ -221,10 +249,18 @@ function setPosibleMoves() {
 		}else if(checkSides(selectedStoneX, selectedStoneY) == 1) {
 			if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 0) {
 				createPossibleButton(selectedStoneX + 1, selectedStoneY + 1);
+			}else if(gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 1){
+				if(gameBoard[selectedStoneX + 2][selectedStoneY + 2] == 0){
+					createPossibleButton(selectedStoneX + 2, selectedStoneY + 2);
+				}
 			}
 		}else if(checkSides(selectedStoneX, selectedStoneY) == 2) {
 			if(gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 0) {
 				createPossibleButton(selectedStoneX + 1, selectedStoneY - 1);
+			}else if(gameBoard[selectedStoneX + 1][selectedStoneY - 1] == 1){
+				if(gameBoard[selectedStoneX + 2][selectedStoneY - 2] == 0){
+					createPossibleButton(selectedStoneX + 2, selectedStoneY - 2);
+				}
 			}
 		}
 	}
@@ -241,7 +277,7 @@ function checkSides(x,y){
 }
 
 function isPossibleJump(){
-	if(selectedStoneX >= 2 && selectedStoneX <= 5){
+	if(selectedStoneX >= 1 && selectedStoneX <= 5){
 		if(playerTurn == 1){
 			if(selectedStoneY >= 2)
 				return 1;
