@@ -95,10 +95,12 @@ function TryToEatStone(i, j) {
 				console.log("Possible eat stone at x: " + (i + 1) + " y: " + (j - 1));
 				eatStone(i + 1, j - 1);
 				gameBoard[i + 1][j - 1] = 0;
+				return 1;
 			}else if(i + 2 == selectedStoneX && j + 2 == selectedStoneY){
 				console.log("Possible eat stone at x: " + (i + 1) + " y: " + (j + 1));
 				eatStone(i + 1, j + 1);
 				gameBoard[i + 1][j + 1] = 0;
+				return 1;
 			}
 		}
 	}else{
@@ -107,12 +109,49 @@ function TryToEatStone(i, j) {
 				console.log("Possible eat stone at x: " + (i - 1) + " y: " + (j - 1));
 				eatStone(i - 1, j - 1);
 				gameBoard[i - 1][j - 1] = 0;
+				return 1;
 			}else if(i - 2 == selectedStoneX && j + 2 == selectedStoneY){
 				console.log("Possible eat stone at x: " + (i - 1) + " y: " + (j + 1));
 				eatStone(i - 1, j + 1);
 				gameBoard[i - 1][j + 1] = 0;
+				return 1;
 			}
 		}
+	}
+
+	return 0;
+}
+
+//in this function i have to prevent indexing at out of bounds of game board, just adding simple boolean operators and checkers
+function canEatStone(x, y) {
+	if(playerTurn === 1) {
+		if(gameBoard[x - 1][y - 1] === 2 && gameBoard[x - 1][y + 1] === 2 ) {
+			if(gameBoard[x - 2][y - 2] === 0 || gameBoard[x - 2][y + 2] == 0) {
+				return 1;
+			}else {
+				return 0;
+			}
+		}else if(gameBoard[x - 1][y - 1] === 2 && gameBoard[x - 2][y - 2] === 0){
+			return 1;
+		}else if(gameBoard[x - 1][y + 1] === 2 && gameBoard[x - 2][y + 2] === 0){
+			return 1;
+		}else{
+			return 0;
+		}
+	}else {
+        if(gameBoard[x + 1][y - 1] === 1 && gameBoard[x + 1][y + 1] === 1 ) {
+            if(gameBoard[x + 2][y - 2] === 0 || gameBoard[x + 2][y + 2] == 0) {
+                return 1;
+            }else {
+                return 0;
+            }
+        }else if(gameBoard[x + 1][y - 1] === 1 && gameBoard[x + 2][y - 2] === 0){
+            return 1;
+        }else if(gameBoard[x + 1][y + 1] === 1 && gameBoard[x + 2][y + 2] === 0){
+            return 1;
+        }else{
+            return 0;
+        }
 	}
 }
 
@@ -128,15 +167,26 @@ function handlePossibleButtonClick(e){
 	e.target.addEventListener('click', handleButtonClick, 'false');
 	gameBoard[selectedStoneX][selectedStoneY] = 0;
 
-	TryToEatStone(posX, posY);
+	var stoneEated = TryToEatStone(posX, posY);
 
-	playerTurn == 1 ? playerTurn = 2 : playerTurn = 1;
+	if(stoneEated) {
+	    if(canEatStone(posX, posY)) {
+            setClicableOnlySecondJumpStone(posX, posY);
+            refreshBoard();
+        }else {
+            playerTurn == 1 ? playerTurn = 2 : playerTurn = 1;
 
-	changeArrowPos();
-	refreshBoard();
-	setClicable(0);
+            changeArrowPos();
+            refreshBoard();
+            setClicable(0);
+        }
+    }else {
+        playerTurn == 1 ? playerTurn = 2 : playerTurn = 1;
 
-
+        changeArrowPos();
+        refreshBoard();
+        setClicable(0);
+    }
 
 }
 
@@ -163,7 +213,7 @@ function setPosibleMoves() {
 			}else if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 || gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 1){
 				if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 && gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 0 ){
 					createPossibleButton(selectedStoneX - 1, selectedStoneY - 1);
-				}else if(gameBoard[selectedStoneX - 1][selectedStoneY - 1 ] == 1 && gameBoard[selectedStoneX + 1][selectedStoneY + 1] == 0){
+				}else if(gameBoard[selectedStoneX - 1][selectedStoneY - 1 ] == 1 && gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 0){
 					createPossibleButton(selectedStoneX - 1, selectedStoneY + 1);
 				}else if(gameBoard[selectedStoneX - 1][selectedStoneY + 1] == 1 && gameBoard[selectedStoneX - 1][selectedStoneY - 1] == 2){
 					if(gameBoard[selectedStoneX - 2][selectedStoneY - 2] == 0){
@@ -291,6 +341,21 @@ function isPossibleJump(){
 		}
 	}
 
+}
+
+function setClicableOnlySecondJumpStone(x, y) {
+
+    for(var i = 0; i < 8; i++) {
+        for(var j = 0; j < 8; j++) {
+            var btn = document.getElementById((8 * i) + j);
+
+            if (btn != null){
+                if (i != x && j != y && gameBoard[i][j] === playerTurn) {
+                    btn.removeEventListener("click", handleButtonClick, 'false');
+                }
+            }
+        }
+    }
 }
 
 function setClicable(gameStart) {
