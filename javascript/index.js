@@ -125,34 +125,36 @@ function TryToEatStone(i, j) {
 //in this function i have to prevent indexing at out of bounds of game board, just adding simple boolean operators and checkers
 function canEatStone(x, y) {
 	if(playerTurn === 1) {
-		if(gameBoard[x - 1][y - 1] === 2 && gameBoard[x - 1][y + 1] === 2 ) {
-			if(gameBoard[x - 2][y - 2] === 0 || gameBoard[x - 2][y + 2] == 0) {
+		if(!isOutOfBounds(x - 1, y - 1) && !isOutOfBounds(x - 1, y + 1) && gameBoard[x - 1][y - 1] === 2 && gameBoard[x - 1][y + 1] === 2 ) {
+			if(!isOutOfBounds(x - 2, y - 2) && !isOutOfBounds(x - 2, y + 2) && (gameBoard[x - 2][y - 2] === 0 || gameBoard[x - 2][y + 2] == 0)) {
 				return 1;
 			}else {
 				return 0;
 			}
-		}else if(gameBoard[x - 1][y - 1] === 2 && gameBoard[x - 2][y - 2] === 0){
+		}else if(!isOutOfBounds(x - 1, y - 1) && !isOutOfBounds(x - 2, y - 2) && gameBoard[x - 1][y - 1] === 2 && gameBoard[x - 2][y - 2] === 0){
 			return 1;
-		}else if(gameBoard[x - 1][y + 1] === 2 && gameBoard[x - 2][y + 2] === 0){
+		}else if(!isOutOfBounds(x - 1, y + 1) && !isOutOfBounds(x - 2, y + 2) && gameBoard[x - 1][y + 1] === 2 && gameBoard[x - 2][y + 2] === 0){
 			return 1;
 		}else{
 			return 0;
 		}
 	}else {
-        if(gameBoard[x + 1][y - 1] === 1 && gameBoard[x + 1][y + 1] === 1 ) {
-            if(gameBoard[x + 2][y - 2] === 0 || gameBoard[x + 2][y + 2] == 0) {
+        if(!isOutOfBounds(x + 1, y - 1) && !isOutOfBounds(x + 1, y + 1) && gameBoard[x + 1][y - 1] === 1 && gameBoard[x + 1][y + 1] === 1 ) {
+            if(!isOutOfBounds(x + 2, y - 2) && !isOutOfBounds(x + 2, y + 2) && (gameBoard[x + 2][y - 2] === 0 || gameBoard[x + 2][y + 2] == 0)) {
                 return 1;
             }else {
                 return 0;
             }
-        }else if(gameBoard[x + 1][y - 1] === 1 && gameBoard[x + 2][y - 2] === 0){
+        }else if(!isOutOfBounds(x + 1, y - 1) && !isOutOfBounds(x + 2, y - 2) && gameBoard[x + 1][y - 1] === 1 && gameBoard[x + 2][y - 2] === 0){
             return 1;
-        }else if(gameBoard[x + 1][y + 1] === 1 && gameBoard[x + 2][y + 2] === 0){
+        }else if(!isOutOfBounds(x + 1, y + 1) && !isOutOfBounds(x + 2, y + 2) && gameBoard[x + 1][y + 1] === 1 && gameBoard[x + 2][y + 2] === 0){
             return 1;
         }else{
             return 0;
         }
 	}
+
+	return 0;
 }
 
 function handlePossibleButtonClick(e){
@@ -342,6 +344,12 @@ function isPossibleJump(){
 	}
 
 }
+
+
+function isOutOfBounds(x, y) {
+	return (x < 0 && x > 7) || (y < 0 && y > 7 );
+}
+
 
 function setClicableOnlySecondJumpStone(x, y) {
 
